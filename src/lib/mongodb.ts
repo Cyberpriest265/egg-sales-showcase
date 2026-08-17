@@ -7,12 +7,21 @@ if (!MONGODB_URI) {
 }
 
 
-// We cache the connection in development so Next.js hot-reloads don't open thousands of connections
-let cached = (global as any).mongoose;
+type MongooseCache = {
+  conn: typeof mongoose | null;
+  promise: Promise<typeof mongoose> | null;
+};
 
-if (!cached) {
-  cached = (global as any).mongoose = { conn: null, promise: null };
+// We cache the connection in development so Next.js hot-reloads don't open thousands of connections
+const globalWithMongoose = global as typeof globalThis & {
+  mongoose?: MongooseCache;
+};
+
+if (!globalWithMongoose.mongoose) {
+  globalWithMongoose.mongoose = { conn: null, promise: null };
 }
+
+const cached = globalWithMongoose.mongoose;
 
 async function connectMongo() {
   if (cached.conn) {

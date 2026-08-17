@@ -17,12 +17,14 @@ export async function GET() {
             success: true,
             message: "Successfully connected to MongoDB Atlas  🎉"
         });
-    } catch (error: any) {
+    } catch (error: unknown) {
         // If it fails, we catch the error and send the exact message to the browser
+        const message = error instanceof Error ? error.message : "Unknown database connection error";
+        const name = error instanceof Error ? error.name : "Error";
         return NextResponse.json({
             success: false,
-            error: error.message,
-            name: error.name
+            error: message,
+            name
         }, { status: 500 })
     }
 }
