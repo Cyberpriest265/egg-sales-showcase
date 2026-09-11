@@ -75,5 +75,21 @@ export async function POST(request: Request) {
         relatedSaleId: sale._id,
     });
 
-    return NextResponse.json(sale, { status: 201 });
+    return NextResponse.json(sale, { status:201 });
 }
+
+
+export async function GET() {
+    await connectMongo();
+
+    //finds all sales, newest first, and returns the 50 most recent records 
+    const sales = await Sale.find().sort({ date: -1 }).limit(50);
+
+    return NextResponse.json(sales);
+}
+
+type Sale = {
+    _id: string;
+    eggTypeId: string;
+    quantity: number;
+};

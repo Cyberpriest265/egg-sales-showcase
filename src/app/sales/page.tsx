@@ -2,7 +2,22 @@
 
 import { useEffect, useMemo, useState } from "react";
 
-type EggTypeOption = { _id: string; name: string; unitPrice?: number; isActive: boolean };
+type EggTypeOption = { 
+    _id: string;
+    name: string;
+    unitPrice?: number;
+    isActive: boolean; 
+};
+type Sale = {
+    _id: string;
+    eggTypeId: string;
+    quantity: number;
+    saleTotal: number;
+    amountPaid: number;
+    amountOwed: number;
+    customerName?: string;
+    date: string;
+};
 
 export default function SalesPage() {
     const [eggTypes, setEggTypes] = useState<EggTypeOption[]>([]);
@@ -12,13 +27,21 @@ export default function SalesPage() {
     const [customerName, setCustomerName] = useState("");
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
+    const [ sales, setSales] = useState<Sale[]>([]);
 
     useEffect(() => {
+
+        fetch("/api/sales")
+            .then((res) => res.json())
+            .then(setSales)
+            .catch(() => setError("Failed to load sales"));
+
         fetch("/api/egg-types")
             .then((res) => res.json())
             .then(setEggTypes)
             .catch(() => setError("Failed to load egg types"));
     }, []);
+
 
     const selectedEggType = eggTypes.find((e) => e._id === eggTypeId);
 
@@ -66,7 +89,7 @@ export default function SalesPage() {
     };
 
     return (
-        <div className="min-h-screen bg-slate-50 p-8 max-w-4xl mx-auto">
+        <div className="min-h-screen bg-slate-50 p-8 max-w-5xl mx-auto">
             <h1 className="text-3xl font-bold mb-6">Record Sale</h1>
 
             {error && (
@@ -151,7 +174,37 @@ export default function SalesPage() {
                         Record Sale
                     </button>
                 </form>
-            </div>
         </div>
+                <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 border-t-4 border-t-blue-500">
+                <h2 className="text-xl font-semibold mb-4">Recent Sales</h2>
+
+                {sales.length === 0 ? (
+                    <p className="text-gray-500">No sales recorded yet.</p>
+                ) : (
+                    <ul className="space-y-3">
+                        {sales.map((sale) => (
+                            <li key={sale._id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                <div>
+                                    <p className="font-medium">
+                                        {eggTypes.find((e) => e._id === sale.eggTypeId)?.name ?? "Unknown"}
+                                    </p>
+                                    <p className="text-sm text-gray-500">
+                                        {new Date(sale.date).toLocaleDateString()} · Qty {sale.quantity} · GH₵{sale.saleTotal}
+                                    </p>
+                                </div>
+                                <div className="text-right">
+                                    <p className="font-semibold">
+                                        {sale.customerName ? `${sale.customerName} · ` : ""}GH₵{sale.amountPaid} paid
+                                    </p>
+                                    {sale.amountOwed > 0 && (
+                                        <p className="text-sm text-red-600">OWES GH₵{sale.amountOwed}</p>
+                                    )}
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                )}
+            </div>
+            </div>
     );
 }
