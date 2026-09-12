@@ -24,3 +24,36 @@ Promise<DailySummary> {
         totalOwed: sales.reduce((sum, s) => sum + s.amountOwed, 0),
     };
 }
+
+export type DayRow = DailySummary;
+
+export type WeeklySummary = {
+    days: DayRow[];
+    weekTotal: {
+        totalQuantity: number;
+        totalSalesTotal: number;
+        totalPaid: number;
+        totalOwed: number;
+    };
+};
+
+export async function getWeeklySummary(weekStart: Date): Promise<WeeklySummary> {
+    const days: DayRow[] = [];
+    const base = new Date(weekStart.getFullYear(), weekStart.getMonth(), weekStart.getDate());
+
+    for (let i = 0; i < 7; i++) {
+        const day = new Date(base.getFullYear(), base.getMonth(), base.getDate() + i);
+        days.push(await getDailySummary(day));
+    }
+
+    const weekTotal = {
+        totalQuantity: days.reduce((sum, d) => sum + d.totalQuantity, 0),
+        totalSalesTotal: days.reduce((sum, d) => sum + d.totalSalesTotal, 0),
+        totalPaid: days.reduce((sum, d) => sum + d.totalPaid, 0),
+        totalOwed: days.reduce((sum, d) => sum + d.totalOwed, 0),
+    };
+    
+    return { days, weekTotal };
+    
+}
+
