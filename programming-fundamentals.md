@@ -192,6 +192,20 @@ await fetch("/api/sales", { method: "POST", body: JSON.stringify(...) });
 
 > **Learning radar:** HTTP status codes (200 OK, 400 bad request, 404 not found, 500 server error), request headers, and the difference between them — the vocabulary of every API conversation.
 
+**Testing an API from the terminal** — the browser can only do GET; for POST you need a client. In PowerShell (git-bash: `curl`; or Postman for point-and-click):
+
+```powershell
+$body = @{ type = "expense"; category = "transport"; amount = 20; reason = "test" } | ConvertTo-Json
+Invoke-RestMethod -Uri "http://localhost:3000/api/adjustments" -Method Post -ContentType "application/json" -Body $body
+```
+
+- `@{ ... }` builds the data as name→value pairs
+- `ConvertTo-Json` turns it into the JSON the API expects (the same shape `fetch` sends)
+- `Invoke-RestMethod` = PowerShell's `fetch` — send a request, get the parsed reply
+- `-Method Post` = the verb (drop it for GET)
+- GET needs no body: `Invoke-RestMethod "http://localhost:3000/api/reports/daily?date=2026-09-04"`
+- To *see* error codes, use `Invoke-WebRequest`, or wrap in `try/catch` and inspect `$_.Exception.Response.StatusCode`
+
 ---
 
 ## 7. Problem Solving & Algorithms
