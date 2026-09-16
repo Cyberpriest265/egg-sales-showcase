@@ -68,7 +68,13 @@ export default function DashboardPage() {
         />
         <Card title="Remaining Stock" value={String(totalStock)} accent="border-t-purple-500" />
       </div>
-    </div>
+      <a
+        href={`/api/reports/daily-csv?date=${todayString()}`}
+        className="mt-4 inline-block text-sm text-blue-600 underline hover:text-blue-800">
+        Download today&apo;s report (CSV)
+      </a>
+
+    </div> 
   );
 }
 
