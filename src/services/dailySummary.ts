@@ -1,4 +1,5 @@
 import { Sale } from '@/models/Sale';
+import { Adjustment } from '@/models/Adjustment';
 
 export type DailySummary = {
     date: string;
@@ -7,13 +8,30 @@ export type DailySummary = {
     totalSalesTotal: number;
     totalPaid: number;
     totalOwed: number;
-};
+    totalIncomeAdjustments: number;
+    totalExpenseAdjustments: number;
+    totalTransportExpenses: number;
+}
+
 
 export async function getDailySummary (date: Date):
 Promise<DailySummary> {
     const start = new Date(date.getFullYear(), date.getMonth(), date.getDate());
     const end = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1);
-    const sales = await Sale.find({ date: {$gte: start, $lt: end } });
+    const [sales, adjustments] = await Promise.all([
+        Sale.find({ date: { $gte: start, $lt: end } }),
+        Adjustment.find({ date: { $gte: start, $lt: end } })
+    ]);
+
+    const totalIncomeAdjustments = adjustments
+        .filter((a) => a.type === "income" && a.category.toLowerCase() !== "transport")
+        .reduce((sum, a) => sum + a.amount, 0);
+    const totalExpenseAdjustments = adjustments
+        .filter((a) => a.type === "expense" && a.category.toLowerCase() !== "transport")
+        .reduce((sum, a) => sum + a.amount, 0);
+    const totalTransportExpenses = adjustments
+        .filter((a) => a.type === "expense" && a.category.toLowerCase() === "transport")
+        .reduce((sum, a) => sum + a.amount, 0);
 
     return {
         date: date.toISOString(),
@@ -22,6 +40,9 @@ Promise<DailySummary> {
         totalSalesTotal: sales.reduce((sum, s) => sum + s.saleTotal, 0),
         totalPaid: sales.reduce((sum, s) => sum + s.amountPaid, 0),
         totalOwed: sales.reduce((sum, s) => sum + s.amountOwed, 0),
+        totalIncomeAdjustments,
+        totalExpenseAdjustments,
+        totalTransportExpenses,
     };
 }
 

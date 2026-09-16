@@ -3,16 +3,19 @@
 import { useEffect, useState } from "react";
 
 type Summary = {
-    totalTransactions: number;
-    totalQuantity: number;
-    totalSalesTotal: number;
-    totalPaid: number;
-    totalOwed: number;
+  totalTransactions: number;
+  totalQuantity: number;
+  totalSalesTotal: number;
+  totalPaid: number;
+  totalOwed: number;
+  totalIncomeAdjustments: number;
+  totalExpenseAdjustments: number;
+  totalTransportExpenses: number;
+  
 };
 
 type StockItem = { eggTypeId: string; name: string; remainingStock: number };
-
-const todayString = () => {
+  const todayString = () => {
   const d = new Date();
   const y = d.getFullYear();
   const m = String(d.getMonth() + 1).padStart(2, "0");
@@ -39,6 +42,8 @@ export default function DashboardPage() {
 
   const totalStock = stock.reduce((sum, item) => sum + item.remainingStock, 0);
 
+  const adjustmentNet = summary? summary.totalIncomeAdjustments - summary.totalExpenseAdjustments :null;
+
   return (
     <div className="min-h-screen bg-slate-50 p-8 max-w-5xl mx-auto">
       <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
@@ -52,6 +57,15 @@ export default function DashboardPage() {
         <Card title="Eggs Sold" value={summary ? String(summary.totalQuantity) : "—"} accent="border-t-green-500" />
         <Card title="Amount Paid" value={summary ? `GH₵${summary.totalPaid}` : "—"} accent="border-t-yellow-500" />
         <Card title="Amount Owed" value={summary ? `GH₵${summary.totalOwed}` : "—"} accent="border-t-red-500" />
+        <Card
+          title="Adjustments (excl. transport)"
+          value={adjustmentNet !== null ? `${adjustmentNet >= 0 ? "+" : "−"}GH₵${Math.abs(adjustmentNet)}` : "—"}
+          accent={
+          adjustmentNet !== null && adjustmentNet < 0
+            ? "border-t-red-500"
+            : "border-t-emerald-500"
+          } 
+        />
         <Card title="Remaining Stock" value={String(totalStock)} accent="border-t-purple-500" />
       </div>
     </div>
