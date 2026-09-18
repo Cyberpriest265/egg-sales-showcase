@@ -301,6 +301,47 @@ These run through every section:
 
 ---
 
+## 11. Testing (Vitest)
+
+**Testing is proving behaviour with code instead of trusting the eye test.** A test is a tiny script that *runs your code* and *checks its answer* — automated proof, repeated forever.
+
+**Why it's not optional:** manual testing drifts. You test "owed = total − paid" once, it works, you move on — then a change 20 commits later silently breaks it and nothing tells you. A test *never forgets*. It's a **specification that refuses to lie**: every `it("does this when that")` names a promise your code made.
+
+**Vitest's place in the stack:** your app's runtime is the browser/Next.js. Vitest is a *separate* world where pure functions are executed and their outputs compared. It's built on **vite** (the bundler it needs as a peer install) — think of vitest as "vite for running checks instead of serving pages."
+
+**The anatomy of a test — three parts:**
+
+```ts
+import { escapeCSV } from "@/lib/csv";
+
+describe("escapeCSV", () => {                 // the suite = a group of promises
+    it("passes clean strings through unchanged", () => {   // one promise, as a sentence
+        expect(escapeCSV("hello")).toBe("hello");          // the verdict
+    });
+});
+```
+
+Read the pattern as a sentence: *"So-and-so **does** this **when** that."* If it fails, the failure message reads like prose: `Expected "a,b" to be "a,b"`.
+
+**The shape of every test — arrange, act, assert:**
+
+1. **Arrange** — set up the inputs (`escapeCSV("a,b")`)
+2. **Act** — run the thing you're testing (the matcher calls it)
+3. **Assert** — compare the output to the known answer (`.toBe` = "must equal exactly")
+
+**What makes code *testable*:** pure functions. `escapeCSV` takes in, returns out, touches no database, no network, no randomness — so it's trivial to test. Code tangled with a database (a route) needs an *integration* test with a real (or mocked) DB, which is heavier. That's why the project keeps logic in **services/functions** (pure, testable) separate from **routes** (wired, busier).
+
+**Commands:**
+
+- `npm test` — run all tests once (CI / pre-commit mode)
+- `npm run test:watch` — re-run on every save (build-time companion while developing)
+
+**Setup trivia worth remembering:** the `@` alias had to be mirrored in `vitest.config.ts`, otherwise `@/lib/csv` couldn't resolve inside the test world; and `--legacy-peer-deps` (peers like vite skipped) put two install steps on the table. Peer-dependency conflicts are "runtime vs types" scandals — always confirm which one npm is fussing about before overriding.
+
+> **Learning radar:** testing *with* a database (integration tests), mocking (`mock`/`spy` to fake the DB so tests stay fast), coverage reports (what percent of your code has proof), and Test-Driven Development — *write the test first, watch it fail, then write the code to make it pass.*
+
+---
+
 ## Concept map: where we are
 
 | Concept | Anchored in | Section |
@@ -315,5 +356,6 @@ These run through every section:
 | Concurrency | async/await, `Promise.all` | 8 |
 | Architecture | plan's UI → API → service → model → DB | 9 |
 | Habits | validation, naming, git, secrets | 10 |
+| Testing | `describe`/`it`/`expect`, arrange-act-assert, Vitest | 11 |
 
-*Last updated: Day 2 — Phase 8a (daily totals service).*
+*Last updated: Day 9 — Phase 12 (testing setup + Vitest).*
