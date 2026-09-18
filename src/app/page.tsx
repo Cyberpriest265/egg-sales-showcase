@@ -23,6 +23,16 @@ type StockItem = { eggTypeId: string; name: string; remainingStock: number };
   return `${y}-${m}-${day}`;
 };
 
+const weekStartString = () => {
+  const d = new Date();
+  const offset = (d.getDay() + 6) % 7;
+  d.setDate(d.getDate() - offset);
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${d.getFullYear()}-${m}-${day}`;
+};
+
+
 export default function DashboardPage() {
   const [summary, setSummary] = useState<Summary | null>(null);
   const [stock, setStock] = useState<StockItem[]>([]);
@@ -71,9 +81,14 @@ export default function DashboardPage() {
       <a
         href={`/api/reports/daily-csv?date=${todayString()}`}
         className="mt-4 inline-block text-sm text-blue-600 underline hover:text-blue-800">
-        Download today&apo;s report (CSV)
+        Download today&apos;s report (CSV)
       </a>
-
+      
+      <a
+        href={`/api/reports/weekly-csv?start=${weekStartString()}`}
+        className="mt-2 inline-block text-sm text-blue-600 underline hover:text-blue-800">
+        Download this week&apos;s report (CSV)
+      </a>
     </div> 
   );
 }

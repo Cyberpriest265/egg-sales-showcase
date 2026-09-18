@@ -1,10 +1,8 @@
 import connectMongo from "@/lib/mongodb";
 import { getDailySummary } from "@/services/dailySummary";
+import { escapeCSV } from "@/lib/csv";
 
-const escapeCSV = (value: string | number) => {
-    const s = String(value);
-    return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
-};
+
 
 export async function GET(request: Request) {
     await connectMongo();
