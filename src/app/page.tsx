@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Nav from "@/components/Nav";
 
 type Summary = {
   totalTransactions: number;
@@ -56,6 +57,7 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-slate-50 p-8 max-w-5xl mx-auto">
+      <Nav />
       <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
 
       {error && (
@@ -80,13 +82,12 @@ export default function DashboardPage() {
       </div>
       <a
         href={`/api/reports/daily-csv?date=${todayString()}`}
-        className="mt-4 inline-block text-sm text-blue-600 underline hover:text-blue-800">
+        className="mt-4 inline-block px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
         Download today&apos;s report (CSV)
       </a>
-      
       <a
         href={`/api/reports/weekly-csv?start=${weekStartString()}`}
-        className="mt-2 inline-block text-sm text-blue-600 underline hover:text-blue-800">
+        className="mt-2 inline-block px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
         Download this week&apos;s report (CSV)
       </a>
     </div> 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Nav from "@/components/Nav";
 
 type EggTypeOption = { 
     _id: string;
@@ -90,6 +91,7 @@ export default function SalesPage() {
 
     return (
         <div className="min-h-screen bg-slate-50 p-8 max-w-5xl mx-auto">
+            <Nav />
             <h1 className="text-3xl font-bold mb-6">Record Sale</h1>
 
             {error && (
