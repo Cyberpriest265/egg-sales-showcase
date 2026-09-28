@@ -1,22 +1,24 @@
 import connectMongo from "@/lib/mongodb";
 import { getWeeklySummary } from "@/services/dailySummary";
 import { escapeCSV } from "@/lib/csv";
+import { parseDateParam } from "@/lib/dateParam";
 
 export async function GET(request: Request) {
     await connectMongo();
 
     const { searchParams } = new URL(request.url);
-    const startParam = searchParams.get("start");
 
-    if (!startParam || !/^\d{4}-\d{2}-\d{2}$/.test(startParam)) {
-        return new Response("start is required as YYYY-MM-DD", {
+    const startParam = searchParams.get("start");
+    const weekStart = parseDateParam(startParam);
+
+    if (!weekStart) {
+        return new Response("Start is required as YYYY-MM-DD", {
             status: 400,
             headers: { "Content-Type": "text/plain" },
         });
     }
 
-    const [y, m, d] = startParam.split("-").map(Number);
-    const { days } = await getWeeklySummary(new Date(y, m - 1, d));
+    const { days } = await getWeeklySummary(weekStart);
 
     const header = [
         "Date", "Transactions", "Quantity", "Sales Total", "Paid",
