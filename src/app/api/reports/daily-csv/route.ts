@@ -14,9 +14,9 @@ export async function GET(request: Request) {
     const date = parseDateParam(dateParam);
 
     if (!dateParam || !date) {
-        return new Response("date is required as YYYY-MM-DD", {
+        return new Response(JSON.stringify({ error: "date is required (YYYY-MM-DD)" }), {
             status: 400,
-            headers: { "Content-Type": "text/plain" },
+            headers: { "Content-Type": "application/json" },
         });
     }
 

@@ -11,7 +11,6 @@ export async function GET() {
 
         //Attempt to connect directly 
         await mongoose.connect(uri, { serverSelectionTimeoutMS: 5000 });
-        console.log("Process env: ", process.env);
 
         return NextResponse.json({
             success: true,

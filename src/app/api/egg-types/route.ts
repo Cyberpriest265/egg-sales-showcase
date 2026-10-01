@@ -20,7 +20,7 @@ export async function POST(request: Request) {
     const name = body.name?.trim();
 
     if (!name) {
-        return NextResponse.json({ error: 'Name is required' });
+        return NextResponse.json({ error: 'Name is required' }, { status: 400 });
     }
     const eggType = await EggType.create({
         name,
