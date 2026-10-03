@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Nav from "@/components/Nav";
+import AppShell from "@/components/AppShell";
 
 type EggType = {
     _id: string;
@@ -127,8 +127,7 @@ export default function EggTypesPage() {
     };
 
     return (
-        <div className="min-h-screen bg-slate-50 p-8 max-w-4xl mx-auto">
-            <Nav />
+        <AppShell>
             <h1 className="text-3xl font-bold mb-6">Manage Egg Types</h1>
 
             {error && (
@@ -240,6 +239,6 @@ export default function EggTypesPage() {
                     </ul>
                 )}
             </div>
-        </div>
+    </AppShell>
     );
 }

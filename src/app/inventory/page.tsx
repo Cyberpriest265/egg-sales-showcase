@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Nav from "@/components/Nav";
+import AppShell from "@/components/AppShell";
 
 type StockItem = { eggTypeId: string; name: string; remainingStock: number };
 type EggTypeOption = { _id: string; name: string; isActive: boolean };
@@ -84,8 +84,7 @@ export default function InventoryPage() {
     };
 
     return (
-        <div className="min-h-screen bg-slate-50 p-8 max-w-4xl mx-auto">
-            <Nav />
+        <AppShell>
             <h1 className="text-3xl font-bold mb-6">Inventory</h1>
 
             {error && (
@@ -178,6 +177,6 @@ export default function InventoryPage() {
                     </ul>
                 )}
             </div>
-        </div>
+    </AppShell>
     );
 }
