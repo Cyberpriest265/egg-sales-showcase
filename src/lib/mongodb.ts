@@ -1,7 +1,5 @@
 import mongoose from 'mongoose';
 
-const MONGODB_URI = process.env.MONGODB_URI;
-
 
 
 
@@ -22,16 +20,17 @@ if (!globalWithMongoose.mongoose) {
 const cached = globalWithMongoose.mongoose;
 
 async function connectMongo() {
-  if (!MONGODB_URI) {
-    throw new Error('Missing MONGODB_URI environment variable.');
-  }
   if (cached.conn) {
     return cached.conn
   }
 
 
+  if (!process.env.MONGODB_URI) {
+    throw new Error("Missing MONGODB_URI environment variable");
+  }
+
   if (!cached.promise) {
-    cached.promise = mongoose.connect(MONGODB_URI, { serverSelectionTimeoutMS: 5000 });
+    cached.promise = mongoose.connect(process.env.MONGODB_URI, {serverSelectionTimeoutMS: 5000 });
   }
 
   cached.conn = await

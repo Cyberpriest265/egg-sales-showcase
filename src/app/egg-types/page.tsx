@@ -65,8 +65,14 @@ export default function EggTypesPage() {
             );
 
             if (!response.ok) {
-                const data = await response.json();
-                throw new Error(data.error || "Failed to save egg type");
+                let message = "Failed to save egg type";
+                try {
+                    const data = await response.json();
+                    message = data.error || message;
+                } catch {
+                    message = `Request failed (${response.status})`;
+                }
+                throw new Error(message);
             }
 
             resetForm();
@@ -76,14 +82,14 @@ export default function EggTypesPage() {
         }
     };
 
-    const handleEdit = (egg: EggType) => {
+        const handleEdit = (egg: EggType) => {
         setEditingId(egg._id);
         setName(egg.name);
         setUnitPrice(egg.unitPrice !== undefined ? String(egg.unitPrice) : "");
         setError("");
     };
 
-    const handleToggleActive = async (egg: EggType) => {
+const handleToggleActive = async (egg: EggType) => {
         try {
             const response = await fetch(`/api/egg-types/${egg._id}`, {
                 method: "PATCH",
@@ -92,7 +98,7 @@ export default function EggTypesPage() {
             });
 
             if (!response.ok) {
-                const data = await response.json();
+                const data = await response.json().catch(() => ({}));
                 throw new Error(data.error || "Failed to update egg type");
             }
 
@@ -113,7 +119,7 @@ export default function EggTypesPage() {
             });
 
             if (!response.ok) {
-                const data = await response.json();
+                const data = await response.json().catch(() => ({}));
                 throw new Error(data.error || "Failed to delete egg type");
             }
 
