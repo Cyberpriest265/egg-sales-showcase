@@ -12,7 +12,7 @@ const links = [
     { href: "/egg-types", label: "Egg Types" },
 ];
 
-export default function Sidebar() {
+export default function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
     const pathname = usePathname();
 
     return (
@@ -28,6 +28,7 @@ export default function Sidebar() {
                         <Link
                             key={link.href}
                             href={link.href}
+                            onClick={onNavigate}
                             className={`block px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                                 active
                                     ? "bg-blue-600 text-white"
@@ -46,6 +47,7 @@ export default function Sidebar() {
                 <p className="text-xs text-slate-500 mb-2 mt-4">Reports</p>
                 <a
                     href={`/api/reports/daily-csv?date=${todayString()}`}
+                    onClick={onNavigate}
                     className="block w-full text-center px-4 py-2 rounded-lg text-sm bg-slate-800 text-slate-200 border border-slate-700 hover:bg-blue-600 hover:border-blue-600 hover:text-white transition-colors mb-2"
                 >
                     Daily report
@@ -53,6 +55,7 @@ export default function Sidebar() {
 
                 <a
                     href={`/api/reports/weekly-csv?start=${weekStartString()}`}
+                    onClick={onNavigate}
                     className="block w-full text-center px-4 py-2 rounded-lg text-sm bg-slate-800 text-slate-200 border border-slate-700 hover:bg-blue-600 hover:border-blue-600 hover:text-white transition-colors"
                 >
                     Weekly report 
