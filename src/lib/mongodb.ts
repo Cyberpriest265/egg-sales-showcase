@@ -30,7 +30,11 @@ async function connectMongo() {
   }
 
   if (!cached.promise) {
-    cached.promise = mongoose.connect(process.env.MONGODB_URI, {serverSelectionTimeoutMS: 5000 });
+    cached.promise = mongoose.connect(process.env.MONGODB_URI, {serverSelectionTimeoutMS: 5000 })
+    .catch((err) => {
+      cached.promise = null //allows the next request to retry;
+      throw err;
+    });
   }
 
   cached.conn = await
